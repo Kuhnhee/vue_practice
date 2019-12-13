@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+  <title>Document</title>
+</head>
+<body>
+  <!-- vue instance를 마운트할 위치 -->
+  <div id='app'>
+    <h1>댓글달기</h1>
+    <!-- vue directive 사용해서 실시간으로 연결 -->
+    <input type="text" v-model="msg">
+    <p>{{ msg }}</p>
+
+    <h2>좋아요</h2>
+    <p>좋아요 갯수: {{ likeCount }}</p>
+    <button v-on:click="like">좋아요</button> <!-- v-on: button이 ~를 하면~ -->
+  </div>
+
+  <script>
+    // rendering은 vue 너가 해~ 난 어떻게 할지만 알려줄게!
+    // vue 객체 생성
+    const app = new Vue({
+      el: '#app', // ~에서 하면 돼! 라고 위치를 알려주는 것
+      data: { // vue 인스턴스가 사용할 데이터들(정적인 값). Django에서 render할 때 넘겨주는 context와 동일한 역할
+        msg: '와 vuejs 시작했다!',
+        likeCount: 0,
+      },
+      methods: {
+        like: function() {
+          this.likeCount++
+        }
+      },
+    }) 
+  </script>
+</body>
+</html>

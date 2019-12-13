@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <title>Workshop 39</title>
+</head>
+<body>
+
+  <div id="app">
+    <button @click="postSearch">Get Posts!</button>
+  </div>
+
+  <div id="showroom">
+    <ul id="showroom-list">
+
+    </ul>
+  </div>
+  
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+      },
+      methods: {
+        postSearch() {
+          const postURL = 'https://jsonplaceholder.typicode.com/posts'
+          axios.get(postURL)
+              .then(response => {
+
+                const posts = response.data
+                // console.log(posts)
+                posts.forEach(element => {
+                  const title = element.title
+                  const body = element.body
+                  const liTag = document.createElement('li')
+                  const boldTag = document.createElement('b')
+                  boldTag.innerHTML = title
+                  liTag.appendChild(boldTag)
+                  liTag.innerHTML += ' - ' + body
+                  document.querySelector('#showroom-list').appendChild(liTag)
+                });
+              })
+        }
+      }
+    })
+  </script>
+  
+</body>
+</html>

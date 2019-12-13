@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <style>
+    img {
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+
+  <title>Workshop 38</title>
+</head>
+<body>
+
+  <div id="app">
+    <select name="" id="" v-model="selected">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+    </select>
+    <button @click="dogSearch">Get {{ selected }} Dogs!</button>
+  </div>
+
+  <div id="showroom"></div>
+  
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+
+    let dogURL = 'https://dog.ceo/api/breeds/image/random'
+    const app = new Vue({
+      el: '#app',
+      data: {
+        selected: '',
+      },
+      methods: {
+        dogSearch() {
+          const dogURL = 'https://dog.ceo/api/breeds/image/random/' + this.selected
+          axios.get(dogURL)
+              .then(response => {
+                const imgURL = response.data.message
+                imgURL.forEach(element => {
+                  const imgTag = document.createElement('img')
+                  imgTag.src = element
+                  document.querySelector('#showroom').appendChild(imgTag)
+                });
+              })
+        }
+      }
+    })
+  </script>
+  
+</body>
+</html>

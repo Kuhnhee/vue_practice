@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <style>
+
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .red {
+      color: salmon;
+    }
+    .yellow {
+      color: yellow,
+    }
+    .green {
+      color: green,
+    }
+  </style>
+
+  <title>Vue ToDo</title>
+</head>
+<body>
+  <div id="app">
+    <h1>Vue ToDo</h1>
+
+    <button @click="deleteCompleted">완료 목록 전체 삭제</button>
+
+    <!-- 이미지 삽입하기. 속성값 변경하기 -->
+    <!-- <img v-bind:src="imgSrc" v-bind:width="width" v-bind:height="height"> -->
+    <img :src="imgSrc" :width="width" :height="height">
+
+
+    <!-- 새로운 todo항목 추가하기 -->
+    <input type="text" v-model="newTodo" @keyup.enter="addTodo">
+    <!-- <p>{{ newTodo }}</p> -->
+    <button @click="addTodo"> + </button>
+
+    <!-- <ul>
+      <li :class="red" v-for="todo in todos" v-if="!todo.completed" @click="check(todo)">
+        <input type="checkbox" v-model="todo.completed">
+        {{ todo.content }}
+      </li>
+      <li :class="{completed: todo.completed}" v-else v-on:click="check(todo)">
+        <input type="checkbox" v-model="todo.completed">
+        {{ todo.content }}
+      </li>
+    </ul> -->
+
+    <select v-model="status">
+      <option value="all" selected>전체보기</option> <!--초기값 지정-->
+      <option value="active">진행중</option>
+      <option value="completed">완료</option>
+    </select>
+
+    <ul>
+      <li :class="{completed: todo.completed}" v-for="todo in todoByStatus" @click="check(todo)" :key="todo.id">
+        <input type="checkbox" v-model="todo.completed">
+        {{ todo.content }}
+      </li>
+    </ul>
+    <p>{{ reverseNewTodo }}</p>
+    <!-- <p>{{ newTodo.split('').reverse().join('') }}</p> -->
+
+    <!-- <div :style="{ color: activeColor, fontSize: fontSize, textDecoration: textDecoration}">
+      html 스타일링 테스트
+    </div> -->
+
+  </div>
+
+  <script src='https://cdn.jsdelivr.net/npm/vue/dist/vue.js'></script>
+  <script>
+    // chrome localStorage
+    const STORAGE_KEY = 'vue-todos'
+    const todoStorage = {
+      fetch() {
+        //string형태로 리턴된 값을 JSON형태로 파싱 해줘야 한다.
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] //or 연산으로 if-else문 생략
+      },
+      save(todos) {
+        // localStorage에 데이터를 저장. JSON을 string형태로 바꿔서 넣는다.
+        return localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+      },
+    }
+
+    // todoStorage.save() : create와 유사
+    // todoStorage.fetch() : read와 유사
+
+
+    //M (V VM)
+    const app = new Vue({
+      el: '#app',
+      data: {
+        todos: todoStorage.fetch(),
+        // [
+        //   { id:1, content: '꽃 사서 배달시키기', completed: false },
+        //   { id:2, content: 'IR 자료 만들기', completed: false },
+        //   { id:3, content: '과목평가 문제 검토하기', completed: false },
+        //   { id:4, content: '프로젝트 명세 검토하기', completed: false },
+        // ],
+        imgSrc: 'https://joshua1988.github.io/images/posts/web/vuejs/logo.png',
+        height: 100,
+        width: 100,
+        red: 'red',
+        yellow: 'yellow',
+        green: 'green',
+        newTodo: '',
+        activeColor: 'magenta',
+        fontSize: '30px',
+
+        status: 'all', //all:다 보여주기, completed, active
+      },
+
+      methods: {
+        check(todo) {
+          todo.completed = !todo.completed
+        },
+        addTodo() {
+          if (this.newTodo.length != 0){
+              this.todos.push({
+              id: Date.now(),
+              content: this.newTodo,
+              completed: false,
+            })
+          }
+          this.newTodo = '' // 입력창 비움
+        },
+        deleteCompleted() {
+          this.todos = this.todos.filter(function(todo){
+            return todo.completed === false
+          })
+        },
+
+      },
+
+      computed: {
+        reverseNewTodo() {
+          return this.newTodo.split('').reverse().join('')
+        },
+        todoByStatus() {
+          // 진행 중인 일(active)
+          if (this.status === 'active') {
+            return this.todos.filter(function(todo){
+              return !todo.completed
+            })
+          }
+
+          // 완료된 일(completed)
+          if (this.status === 'completed') {
+            return this.todos.filter(function(todo){
+              return todo.completed
+            })
+          }
+
+          return this.todos
+        }
+      },
+
+      watch: {
+        todos: { //todos를 지켜봐... 그러다가 변경되면 handler()실행
+          handler(todos) { //handler() 메소드 이름 지켜줘야 한다.
+            // todos가 변경될 때마다 localStorage에 save()
+            todoStorage.save(todos)
+          },
+          deep: true, // 한 단만 복사하지 말고, 끝까지 넣어주렴 (python의 deepcopy 개념)
+        }
+      }
+    })
+  </script>
+</body>
+</html>
